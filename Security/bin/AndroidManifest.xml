@@ -20,11 +20,11 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
         
-        <activity	android:name=".SecurityRing" ></activity> 
         <activity	android:name=".TCPComActivity" ></activity> 
         <activity	android:name=".SetupActivity" > </activity> 
         <activity	android:name=".NoticeHistoryActivity" ></activity> 
         <activity	android:name=".Messages" > </activity>
+        <activity	android:name=".SecurityRing" > </activity>
         
         <activity
          	android:label="@string/app_name"
