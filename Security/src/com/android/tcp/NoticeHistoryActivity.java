@@ -12,9 +12,12 @@ import android.app.Service;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,8 +43,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.android.tcp.TCPComActivity.TCPCheckConnectThread;
-import com.android.tcp.TCPComActivity.TCPServerThread;
 
 import android.app.Activity;
 import android.content.Context;
@@ -120,23 +121,13 @@ public class NoticeHistoryActivity extends Activity {
 		this.info = (TextView) super.findViewById(R.id.info);
 		this.infoBtn = (Button) super.findViewById(R.id.infoBtn);
 		share = super.getSharedPreferences(FILENAME, Activity.MODE_PRIVATE);
-		
-		//Intent intent = getIntent();
 
-		//NetDataPass netdata = (NetDataPass)getIntent().getExtras().get("intent_object");
-			
-		//client = netdata.client;
-		//outputStream = netdata.outputStream;
-		//inputStream = netdata.inputStream;
-		//serverAddr = netdata.serverAddr;
-		//port = netdata.port;
-		//my_sockaddr = netdata.my_sockaddr;
-	      Session session = Session.getSession();
+	    Session session = Session.getSession();
 
-	      NetDataPass netdata = (NetDataPass)session.get("netdata");
-	      client = netdata.client;
-	      outputStream = netdata.outputStream;
-	      inputStream = netdata.inputStream;
+	    NetDataPass netdata = (NetDataPass)session.get("netdata");
+	    client = netdata.client;
+	    outputStream = netdata.outputStream;
+	    inputStream = netdata.inputStream;
 		
 		infoBtn.setOnClickListener(new ShowListener());
 		
@@ -215,8 +206,24 @@ public class NoticeHistoryActivity extends Activity {
 		{
 			if(v.getId()==R.id.infoBtn)
 			{
-				//deleteItem(nSelect);
-				//ModefyItem(nSelect);
+				//这里添加发送关闭给服务器信息的代码，等待1秒钟，如果服务器回复指定信息就关闭更新这个列表
+				try 
+				{	
+					String StrSendMsg  = "156";
+					outputStream.write(StrSendMsg.getBytes());
+					outputStream.flush();	
+					Toast toast=Toast.makeText(getApplicationContext(), "发送成功！", Toast.LENGTH_SHORT); 
+					toast.setGravity(Gravity.TOP|Gravity.CENTER, 0, 300); 
+					toast.show();
+				} 
+				catch (NumberFormatException e) 
+				{
+						//	Log.d(TAG, e.getMessage());
+				} 
+				catch (IOException e) {
+						//	Log.d(TAG, e.getMessage());
+				}
+				
 				 UpdateList(nSelect);
 			}
 		}
@@ -339,8 +346,7 @@ public class NoticeHistoryActivity extends Activity {
 	                }  
 	            }   
 	        }   
-	       // tvRecv.setText("end");
-	} 
+		} 
 	
 	
 	
@@ -582,5 +588,5 @@ public class NoticeHistoryActivity extends Activity {
 		
 	}
 
-	
+
 }

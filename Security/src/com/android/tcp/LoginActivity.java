@@ -14,8 +14,11 @@ import java.util.Scanner;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -75,61 +78,60 @@ public class LoginActivity extends Activity {
 					String strPass = etPass.getText().toString();
 					if((true == strUser.equals("123"))&&(true == strPass.equals("123")))
 					{
-						
-						try
+						if(isInWifi() != 0  || true) 
 						{
+							try
+							{
+								
+									InetAddress serverAddr = InetAddress.getByName(strIpAddr);// TCPServer.SERVERIP
+									int port=Integer.valueOf(strIpPort);
+									SocketAddress my_sockaddr = new InetSocketAddress(serverAddr, port);
+		
+									//client = new Socket(serverAddr, port);
+									client = new Socket();
+									client.connect(my_sockaddr,50000);			
+									outputStream = client.getOutputStream();
+									inputStream = client.getInputStream();
+									
+									intent.putExtra("serverAddr", "serverAddr");
+								    Session session = Session.getSession();
+
+								    NetDataPass netdata = new NetDataPass();
+								    netdata.client = client;
+								    netdata.inputStream = inputStream;
+									netdata.outputStream = outputStream;
+								     
+								    session.put("netdata", netdata);
+									
+									startActivity(intent);	
+								
 							
-								InetAddress serverAddr = InetAddress.getByName(strIpAddr);// TCPServer.SERVERIP
-								int port=Integer.valueOf(strIpPort);
-								SocketAddress my_sockaddr = new InetSocketAddress(serverAddr, port);
-	
-								//client = new Socket(serverAddr, port);
-								client = new Socket();
-								client.connect(my_sockaddr,50000);			
-								outputStream = client.getOutputStream();
-								inputStream = client.getInputStream();
-								
-								intent.putExtra("serverAddr", "serverAddr");
-								
-								//NetDataPass netdata = new NetDataPass();
-								//netdata.client = client;
-								//netdata.inputStream = inputStream;
-								//netdata.outputStream = outputStream;
-								//netdata.serverAddr = serverAddr;
-								//netdata.port = port;
-								//netdata.my_sockaddr = my_sockaddr;
-								
-													
-								//intent.putExtra("intent_object", netdata);
-								
-							      Session session = Session.getSession();
+							}
+							catch (NumberFormatException e)
+							{
+								Toast toast=Toast.makeText(getApplicationContext(), "连接错误！", Toast.LENGTH_SHORT); 
+								toast.setGravity(Gravity.TOP|Gravity.CENTER, -30, 300); 
+								toast.show();
+								 
+								//Log.d(TAG, e.getMessage());
+							} 
+							catch (IOException e)
+							{
 
-							      NetDataPass netdata = new NetDataPass();
-							      
-							      netdata.client = client;
-							      netdata.inputStream = inputStream;
-								  netdata.outputStream = outputStream;
-							      
-							      session.put("netdata", netdata);
-								
-
-								
-								startActivity(intent);	
+								//this.WarningDialog();
+								Toast toast=Toast.makeText(getApplicationContext(), "连接错误！", Toast.LENGTH_SHORT); 
+								toast.setGravity(Gravity.TOP|Gravity.CENTER, -20, 300); 
+								toast.show();
+							}
 							
+						}
+						else
+						{
+							Toast toast=Toast.makeText(getApplicationContext(), "连接错误！", Toast.LENGTH_SHORT); 
+							toast.setGravity(Gravity.TOP|Gravity.CENTER, -20, 300); 
+							toast.show();
+						}
 						
-						}
-						catch (NumberFormatException e)
-						{
-							// TODO Auto-generated catch block
-							 
-							Log.d(TAG, e.getMessage());
-						} 
-						catch (IOException e)
-						{
-
-							Log.d(TAG, e.getMessage());
-							this.WarningDialog();
-						}
 						
 					}
 
@@ -143,13 +145,7 @@ public class LoginActivity extends Activity {
 						Log.i(TAG, "wrong_"+strPass);
 						System.out.println("--"+strUser);
 						Toast toast=Toast.makeText(getApplicationContext(), "请输入正确的用户名和密码", Toast.LENGTH_SHORT); 
-						//第一个参数：设置toast在屏幕中显示的位置。我现在的设置是居中靠顶 
-						//第二个参数：相对于第一个参数设置toast位置的横向X轴的偏移量，正数向右偏移，负数向左偏移 
-						//第三个参数：同的第二个参数道理一样 
-						//如果你设置的偏移量超过了屏幕的范围，toast将在屏幕内靠近超出的那个边界显示 
 						toast.setGravity(Gravity.TOP|Gravity.CENTER, -20, 300); 
-						//屏幕居中显示，X轴和Y轴偏移量都是0 
-						//toast.setGravity(Gravity.CENTER, 0, 0); 
 						toast.show();
 					}
 					
@@ -164,10 +160,10 @@ public class LoginActivity extends Activity {
 						.setPositiveButton("设置", new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								Intent intentSetup  = new Intent(LoginActivity.this, SetupActivity.class);
-								intentSetup.putExtra("ServerIp", strIpAddr);
-								intentSetup.putExtra("ServerPort", strIpPort);
-								startActivityForResult(intentSetup, 1000);
+					//			Intent intentSetup  = new Intent(LoginActivity.this, SetupActivity.class);
+					//			intentSetup.putExtra("ServerIp", strIpAddr);
+					//			intentSetup.putExtra("ServerPort", strIpPort);
+					//			startActivityForResult(intentSetup, 1000);
 							}
 						}).setNegativeButton("确定", new DialogInterface.OnClickListener() {
 							@Override
@@ -199,10 +195,41 @@ public class LoginActivity extends Activity {
 	
 	
 	
+		public int isInWifi(){
+			//获取wifi服务
+			WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+			//判断wifi是否开启
+			if (!wifiManager.isWifiEnabled()) {
+			wifiManager.setWifiEnabled(true);
+			}
+			WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+			int ipAddress = wifiInfo.getIpAddress();
+			return ipAddress;
+			}
 	
 	
 
-	
+	    public String getLocalIpAddress(){
+	    	//获取wifi服务
+	    	WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+	    	//判断wifi是否开启
+	    	if (!wifiManager.isWifiEnabled()) {
+	    	wifiManager.setWifiEnabled(true);
+	    	}
+	    	WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+	    	int ipAddress = wifiInfo.getIpAddress();
+	    	String ip = intToIp(ipAddress);
+	    	return ip;
+	    	}
+	    	private String intToIp(int i) {
+
+	    	return (i & 0xFF ) + "." +
+	    	((i >> 8 ) & 0xFF) + "." +
+	    	((i >> 16 ) & 0xFF) + "." +
+	    	( i >> 24 & 0xFF) ;
+	    	}
+	    	
+
 	
 	
 	
