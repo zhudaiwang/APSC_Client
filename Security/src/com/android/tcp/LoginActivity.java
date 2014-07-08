@@ -229,15 +229,5 @@ public class LoginActivity extends Activity {
 	    	( i >> 24 & 0xFF) ;
 	    	}
 	    	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 }

@@ -72,6 +72,12 @@ public class NoticeHistoryActivity extends Activity {
 	
 	private String ringtime[] = {"", "", "", "", "", "", "", "", "", "", "", "", ""};
 	
+	private String ringAddr[] = {"", "", "", "", "", "", "", "", "", "", "", "", ""};
+	
+	private String ringType[] = {"", "", "", "", "", "", "", "", "", "", "", "", ""};
+	
+	private String MsgCancel[] = {"", "", "", "", "", "", "", "", "", "", "", "", ""};
+	
 	private ListView datalist = null; // 定义ListView组件
 	
 	private TextView info = null;
@@ -209,7 +215,8 @@ public class NoticeHistoryActivity extends Activity {
 				//这里添加发送关闭给服务器信息的代码，等待1秒钟，如果服务器回复指定信息就关闭更新这个列表
 				try 
 				{	
-					String StrSendMsg  = "156";
+					String StrSendMsg  = ringAddr[nSelect];
+					
 					outputStream.write(StrSendMsg.getBytes());
 					outputStream.flush();	
 					Toast toast=Toast.makeText(getApplicationContext(), "发送成功！", Toast.LENGTH_SHORT); 
@@ -484,8 +491,25 @@ public class NoticeHistoryActivity extends Activity {
 	    						Log.i(TAG,"sb.toString().length():"+ sb.toString().length());
 	    						if(sb.toString().length() < 35)
 	    						{
-	    							tvRecvBuf[nBufIndex] = sb.toString().substring(20);
-	    							ringtime[nBufIndex] =  sb.toString().substring(3, 17);
+	    							
+	    							ringType[nBufIndex] =  sb.toString().substring(0, 1);
+	    							//strRingNo.equals("001")
+	    							if(ringType[nBufIndex].equals("0"))
+	    							{
+	    								//报警已经关闭的信息。请客户端删除对应的报警信息。
+	    								MsgCancel[nBufIndex] =  sb.toString().substring(1, 4);
+	    								
+	    								//查找已接收列表中 （ringAddr[nBufIndex]）地址的序号。
+	    								
+	    								//将该序号对应的“报警”删除，如有必要，弹窗显示，某某报警已被关闭。
+	    							}
+	    							else 
+	    							{
+	    								
+	    								tvRecvBuf[nBufIndex] = sb.toString().substring(21);
+		    							ringtime[nBufIndex] =  sb.toString().substring(4, 18);
+		    							ringAddr[nBufIndex] =  sb.toString().substring(1, 4);
+	    							}
 	    							
 	    						}
 	    						else
