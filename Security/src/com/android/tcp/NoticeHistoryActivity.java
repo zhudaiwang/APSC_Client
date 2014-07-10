@@ -74,9 +74,9 @@ public class NoticeHistoryActivity extends Activity {
 	
 	private String ringAddr[] = {"", "", "", "", "", "", "", "", "", "", "", "", ""};
 	
-	private String ringType[] = {"", "", "", "", "", "", "", "", "", "", "", "", ""};
+	private String ringType = "";
 	
-	private String MsgCancel[] = {"", "", "", "", "", "", "", "", "", "", "", "", ""};
+	private String MsgCancel = "";
 	
 	private ListView datalist = null; // 定义ListView组件
 	
@@ -219,7 +219,7 @@ public class NoticeHistoryActivity extends Activity {
 					
 					outputStream.write(StrSendMsg.getBytes());
 					outputStream.flush();	
-					Toast toast=Toast.makeText(getApplicationContext(), "发送成功！", Toast.LENGTH_SHORT); 
+					Toast toast=Toast.makeText(getApplicationContext(), "发送关闭指令成功，等待服务器确认！", Toast.LENGTH_SHORT); 
 					toast.setGravity(Gravity.TOP|Gravity.CENTER, 0, 300); 
 					toast.show();
 				} 
@@ -230,8 +230,8 @@ public class NoticeHistoryActivity extends Activity {
 				catch (IOException e) {
 						//	Log.d(TAG, e.getMessage());
 				}
-				
-				 UpdateList(nSelect);
+				//因为删除这个报警信息需要等待服务器确认，所以，改为判断服务器信息，删除报警铃声。
+				 //UpdateList(nSelect);
 			}
 		}
 	}
@@ -423,7 +423,7 @@ public class NoticeHistoryActivity extends Activity {
 				public void onClick(DialogInterface dialog, int which) {
 					
 					
-					 Intent intent  = new Intent(NoticeHistoryActivity.this, LoginActivity.class);
+				Intent intent  = new Intent(NoticeHistoryActivity.this, LoginActivity.class);
 						startActivity(intent);	
 					//回到之前的界面
 					
@@ -481,27 +481,37 @@ public class NoticeHistoryActivity extends Activity {
 	    				{
 	    					public void run() 
 	    					{	
-	    						/** media. */
-	    						MediaSound(share.getString("RingFilesNo", "  011"));
-	    						/** media. */	    									
-	    						/** vibrator */
-	    						mVibrator01.vibrate( new long[]{50,500,250,700},-1);
-	    						
-	    						/** vibrator */
+
 	    						Log.i(TAG,"sb.toString().length():"+ sb.toString().length());
 	    						if(sb.toString().length() < 35)
 	    						{
 	    							
-	    							ringType[nBufIndex] =  sb.toString().substring(0, 1);
+	    							ringType =  sb.toString().substring(0, 1);
 	    							//strRingNo.equals("001")
-	    							if(ringType[nBufIndex].equals("0"))
+	    							if(ringType.equals("0"))
 	    							{
+	    								int nAddrIndex = 0;
 	    								//报警已经关闭的信息。请客户端删除对应的报警信息。
-	    								MsgCancel[nBufIndex] =  sb.toString().substring(1, 4);
+	    								MsgCancel =  sb.toString().substring(1, 4);
 	    								
 	    								//查找已接收列表中 （ringAddr[nBufIndex]）地址的序号。
+	    								for(nAddrIndex = 0; nAddrIndex< ringAddr.length; nAddrIndex++)
+	    								{
+	    									if(ringAddr[nAddrIndex].equals(MsgCancel))
+	    									{
+	    										break;
+	    									}
+	    								}
 	    								
 	    								//将该序号对应的“报警”删除，如有必要，弹窗显示，某某报警已被关闭。
+	    								if(nAddrIndex != ringAddr.length)
+	    								{
+	    		    						
+	    		    						Toast toast=Toast.makeText(getApplicationContext(), "该报警已被关闭", Toast.LENGTH_SHORT); 
+	    		    						toast.setGravity(Gravity.TOP|Gravity.CENTER, -20, 300); 
+	    		    						toast.show();
+	    									UpdateList(nAddrIndex);
+	    								}
 	    							}
 	    							else 
 	    							{
@@ -519,11 +529,19 @@ public class NoticeHistoryActivity extends Activity {
 		 		    			
 		 		    			sb.delete(0, sb.length());
 		 		    			
-		 		    			
-		 		    			UpdateListByAuto();
-		 		    			Log.i(TAG,"--+--nBufIndex:"+ nBufIndex);
-		 		    			nBufIndex++;	
-		 		    			
+		 		    			if(!ringType.equals("0"))
+		 		    			{
+		    						/** media. */
+		    						MediaSound(share.getString("RingFilesNo", "  011"));
+		    						/** media. */	    									
+		    						/** vibrator */
+		    						mVibrator01.vibrate( new long[]{50,500,250,700},-1);		
+		    						/** vibrator */
+
+		 		    				UpdateListByAuto();
+			 		    			Log.i(TAG,"--+--nBufIndex:"+ nBufIndex);
+			 		    			nBufIndex++;	
+		 		    			}
 	    					}
 	    				});
 	    			}
