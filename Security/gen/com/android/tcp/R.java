@@ -491,10 +491,10 @@ public final class R {
         public static final int infoBtn=0x7f07000c;
         public static final int info_ring=0x7f070011;
         public static final int linearLayout1=0x7f070004;
-        public static final int name=0x7f070003;
+        public static final int name=0x7f070002;
         public static final int name_ring=0x7f070010;
-        public static final int ringtime=0x7f070002;
-        public static final int state=0x7f070001;
+        public static final int ringtime=0x7f070001;
+        public static final int state=0x7f070003;
     }
     public static final class layout {
         public static final int data_list=0x7f030000;

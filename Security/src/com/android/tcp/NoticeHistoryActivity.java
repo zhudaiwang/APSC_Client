@@ -185,135 +185,18 @@ public class NoticeHistoryActivity extends Activity {
 		new Thread(new TCPServerThread()).start();
 	}
 	
-	
-	private class OnItemClickListenerlmpl implements OnItemClickListener{
-		@Override
-		public void onItemClick(AdapterView<?>parent, View view, int position, long id)
-		{
-			Map<String,String> map = (Map<String,String>)NoticeHistoryActivity.this.simpleAdapter.getItem(position);
-			String _id = map.get("_id");
-			String name = map.get("name");
-			NoticeHistoryActivity.this.info.setText(""+ _id + ", 地点：" + name);
+	protected void onDestroy() {
+		try {
+			client.close();
+		} catch (IOException e) {
 			
-			nSelect = position;
-			//deleteItem(position) ;
-			 //addItem(position) ;
-		}
-		
-
-	}
-		
-
-	
-	private class ShowListener implements OnClickListener{
-		@Override
-				
-		public void onClick(View v) 
-		{
-			if(v.getId()==R.id.infoBtn)
-			{
-				//这里添加发送关闭给服务器信息的代码，等待1秒钟，如果服务器回复指定信息就关闭更新这个列表
-				try 
-				{	
-					String StrSendMsg  = ringAddr[nSelect];
-					
-					outputStream.write(StrSendMsg.getBytes());
-					outputStream.flush();	
-					Toast toast=Toast.makeText(getApplicationContext(), "发送关闭指令成功，等待服务器确认！", Toast.LENGTH_SHORT); 
-					toast.setGravity(Gravity.TOP|Gravity.CENTER, 0, 300); 
-					toast.show();
-				} 
-				catch (NumberFormatException e) 
-				{
-						//	Log.d(TAG, e.getMessage());
-				} 
-				catch (IOException e) {
-						//	Log.d(TAG, e.getMessage());
-				}
-				//因为删除这个报警信息需要等待服务器确认，所以，改为判断服务器信息，删除报警铃声。
-				 //UpdateList(nSelect);
-			}
-		}
-	}
-		
-	
-	
-	
-	private void addItem(int position)  
-	{  
-		HashMap<String, String> map = new HashMap<String, String>();  
-			//map.put("image", R.drawable.icon);  
-			//map.put("title", "标题");  
-		map.put("_id",  this.data[position][0]); // 与data_list.xml中的TextView组加匹配
-		map.put("name", this.data[position][1]); // 与data_list.xml中的TextView组加匹配
-		map.put("state", this.nState[position]); // 与data_list.xml中的TextView组加匹配
-		map.put("ringtime", this.ringtime[position]); // 与data_list.xml中的TextView组加匹配
-		list.add(map);  
-		simpleAdapter.notifyDataSetChanged();  
+			e.printStackTrace();
+		}		
+		super.onDestroy();
 	}  
-	  
-	private void deleteItem(int position)  
-	{  
-		int size = list.size();  
-		if( size > 0 )  
-		{  
-			list.remove(position);  
-			simpleAdapter.notifyDataSetChanged();  
-		}  
-	}  
-	
-
-	private void ModefyItem(int nIndex)  
-	{  
-		deleteItem(nIndex);
-		nState[nIndex] = "";
-		addItem(nIndex);  
-	}  
+    
 	
 	
-	public void UpdateList(int selectedItem)
-	{
-		ListAdapter la = datalist.getAdapter();
-		int itemNum = datalist.getCount();
-		for(int i=0; i< itemNum; i++)
-		{
-			Map<String,String> map = (Map<String,String>)NoticeHistoryActivity.this.simpleAdapter.getItem(i);
-			if(i != selectedItem)
-			{
-				map.put("_id",  this.data[i%10][0]); // 与data_list.xml中的TextView组加匹配
-				map.put("name", this.tvRecvBuf[i]); // 与data_list.xml中的TextView组加匹配
-				map.put("ringtime", this.ringtime[i]); // 与data_list.xml中的TextView组加匹配
-			}
-			else
-			{
-				//map.put("_id",  ""); // 与data_list.xml中的TextView组加匹配
-				//map.put("name", ""); // 与data_list.xml中的TextView组加匹配
-				map.put("state", ""); 
-			}
-			
-		}
-		 ((SimpleAdapter)la).notifyDataSetChanged();
-	}
-	
-
-	public void UpdateListByAuto()
-	{
-		ListAdapter la = datalist.getAdapter();
-		int itemNum = datalist.getCount();
-		
-		Map<String, String> map = new HashMap<String, String>(); // 定义Map集合，保存每一行数据
-		
-			map.put("_id", this.data[nBufIndex%10][0]); // 与data_list.xml中的TextView组加匹配
-			map.put("name", tvRecvBuf[nBufIndex]); // 与data_list.xml中的TextView组加匹配
-			map.put("state", this.nState[nBufIndex]); // 与data_list.xml中的TextView组加匹配
-			map.put("ringtime", this.ringtime[nBufIndex]); // 与data_list.xml中的TextView组加匹配
-			Log.i(TAG,"--+--tvRecvBuf:"+ tvRecvBuf[nBufIndex]);
-			this.list.add(map); // 保存了所有的数据行
-		
-		 ((SimpleAdapter)la).notifyDataSetChanged();
-	}
-	
-
 	public class TCPCheckConnectThread extends Thread 
 	{  
 		private boolean flag = true;
@@ -354,89 +237,6 @@ public class NoticeHistoryActivity extends Activity {
 	            }   
 	        }   
 		} 
-	
-	
-	
-	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) 
-	{
-		if (keyCode == KeyEvent.KEYCODE_BACK) {	// 返回键
-			this.exitDialog() ;
-		}	
-		AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		int currentVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-
-		if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {	// 音量增大
-			mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume+1, 1);
-		}
-		else if(keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)// 音量减小
-		{
-			mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume-1, 1);
-		}
-		   return false;
-		   //return super.onKeyDown(keyCode, event);
-	}
-
-	
-	
-	
-	private void exitDialog(){
-		Dialog dialog = new AlertDialog.Builder(this)
-			.setTitle("注销!")		// 创建标题
-			.setMessage("注销后将无法收到服务器的信息.") // 表示对话框中的内容
-			.setIcon(R.drawable.pic_m) // 设置LOGO
-			.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					NoticeHistoryActivity.this.finish() ;	// 操作结束
-				}
-			}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					
-				}
-			}).create(); // 创建了一个对话框
-		dialog.show() ;	// 显示对话框
-	}
-	
-	
-	protected void onDestroy() {
-		try {
-			client.close();
-		} catch (IOException e) {
-			
-			e.printStackTrace();
-		}		
-		super.onDestroy();
-	}  
-    
-    
-	
-	private void BreakDialog(){
-		Dialog dialog = new AlertDialog.Builder(NoticeHistoryActivity.this)
-			.setTitle("警告!")		// 创建标题
-			.setMessage("与服务器连接断开。") // 表示对话框中的内容
-			.setIcon(R.drawable.pic_m) // 设置LOGO
-			.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					
-					
-				Intent intent  = new Intent(NoticeHistoryActivity.this, LoginActivity.class);
-						startActivity(intent);	
-					//回到之前的界面
-					
-				}
-			}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					
-				}
-			}).create(); // 创建了一个对话框
-		dialog.show() ;	// 显示对话框
-	}
-	
 	
 	public class TCPServerThread extends Thread 
 	{  
@@ -483,11 +283,9 @@ public class NoticeHistoryActivity extends Activity {
 	    					{	
 
 	    						Log.i(TAG,"sb.toString().length():"+ sb.toString().length());
-	    						if(sb.toString().length() < 35)
+	    						if(sb.toString().length() < 50)
 	    						{
-	    							
 	    							ringType =  sb.toString().substring(0, 1);
-	    							//strRingNo.equals("001")
 	    							if(ringType.equals("0"))
 	    							{
 	    								int nAddrIndex = 0;
@@ -506,7 +304,6 @@ public class NoticeHistoryActivity extends Activity {
 	    								//将该序号对应的“报警”删除，如有必要，弹窗显示，某某报警已被关闭。
 	    								if(nAddrIndex != ringAddr.length)
 	    								{
-	    		    						
 	    		    						Toast toast=Toast.makeText(getApplicationContext(), "该报警已被关闭", Toast.LENGTH_SHORT); 
 	    		    						toast.setGravity(Gravity.TOP|Gravity.CENTER, -20, 300); 
 	    		    						toast.show();
@@ -522,14 +319,14 @@ public class NoticeHistoryActivity extends Activity {
 	    							}
 	    							
 	    						}
-	    						else
+	    						else //if(sb.toString().length() > 50)
 	    						{
 	    							//tvRecvBuf[nBufIndex] = sb.toString();
 	    						}
 		 		    			
 		 		    			sb.delete(0, sb.length());
 		 		    			
-		 		    			if(!ringType.equals("0"))
+		 		    			if(ringType.equals("1"))
 		 		    			{
 		    						/** media. */
 		    						MediaSound(share.getString("RingFilesNo", "  011"));
@@ -556,10 +353,194 @@ public class NoticeHistoryActivity extends Activity {
 	      
 	         
 	     }
-	} 
+	} 	
 	
-    
+	
+	
+	private class OnItemClickListenerlmpl implements OnItemClickListener{
+		@Override
+		public void onItemClick(AdapterView<?>parent, View view, int position, long id)
+		{
+			Map<String,String> map = (Map<String,String>)NoticeHistoryActivity.this.simpleAdapter.getItem(position);
+			String _id = map.get("_id");
+			String name = map.get("name");
+			NoticeHistoryActivity.this.info.setText(""+ _id + ", 地点：" + name);		
+			nSelect = position;
+		}
+	}
+		
 
+	
+	private class ShowListener implements OnClickListener{
+		@Override
+				
+		public void onClick(View v) 
+		{
+			if(v.getId()==R.id.infoBtn)
+			{
+				//这里添加发送关闭给服务器信息的代码，等待1秒钟，如果服务器回复指定信息就关闭更新这个列表
+				try 
+				{	
+					String StrSendMsg  = ringAddr[nSelect];
+					
+					outputStream.write(StrSendMsg.getBytes());
+					outputStream.flush();	
+					Toast toast=Toast.makeText(getApplicationContext(), "发送关闭指令成功，等待服务器确认！", Toast.LENGTH_SHORT); 
+					toast.setGravity(Gravity.TOP|Gravity.CENTER, 0, 300); 
+					toast.show();
+				} 
+				catch (NumberFormatException e) 
+				{
+						//	Log.d(TAG, e.getMessage());
+				} 
+				catch (IOException e) {
+						//	Log.d(TAG, e.getMessage());
+				}
+				//因为删除这个报警信息需要等待服务器确认，所以，改为判断服务器信息，删除报警铃声。
+				 //UpdateList(nSelect);
+			}
+		}
+	}
+		
+	
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) 
+	{
+		if (keyCode == KeyEvent.KEYCODE_BACK) {	// 返回键
+			this.exitDialog() ;
+		}	
+		AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		int currentVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {	// 音量增大
+			mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume+1, 1);
+		}
+		else if(keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)// 音量减小
+		{
+			mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume-1, 1);
+		}
+		   return false;
+		   //return super.onKeyDown(keyCode, event);
+	}
+
+	
+	private void addItem(int position)  
+	{  
+		HashMap<String, String> map = new HashMap<String, String>();  
+			//map.put("image", R.drawable.icon);  
+			//map.put("title", "标题");  
+		map.put("_id",  this.data[position][0]); // 与data_list.xml中的TextView组加匹配
+		map.put("name", this.data[position][1]); // 与data_list.xml中的TextView组加匹配
+		map.put("state", this.nState[position]); // 与data_list.xml中的TextView组加匹配
+		map.put("ringtime", this.ringtime[position]); // 与data_list.xml中的TextView组加匹配
+		list.add(map);  
+		simpleAdapter.notifyDataSetChanged();  
+	}  
+	  
+	private void deleteItem(int position)  
+	{  
+		int size = list.size();  
+		if( size > 0 )  
+		{  
+			list.remove(position);  
+			simpleAdapter.notifyDataSetChanged();  
+		}  
+	}  
+	
+	private void ModefyItem(int nIndex)  
+	{  
+		deleteItem(nIndex);
+		nState[nIndex] = "";
+		addItem(nIndex);  
+	}  
+		
+	public void UpdateList(int selectedItem)
+	{
+		ListAdapter la = datalist.getAdapter();
+		int itemNum = datalist.getCount();
+		for(int i=0; i< itemNum; i++)
+		{
+			Map<String,String> map = (Map<String,String>)NoticeHistoryActivity.this.simpleAdapter.getItem(i);
+			if(i != selectedItem)
+			{
+				map.put("_id",  this.data[i%10][0]); // 与data_list.xml中的TextView组加匹配
+				map.put("name", this.tvRecvBuf[i]); // 与data_list.xml中的TextView组加匹配
+				map.put("ringtime", this.ringtime[i]); // 与data_list.xml中的TextView组加匹配
+			}
+			else
+			{
+				//map.put("_id",  ""); // 与data_list.xml中的TextView组加匹配
+				//map.put("name", ""); // 与data_list.xml中的TextView组加匹配
+				map.put("state", ""); 
+			}
+			
+		}
+		 ((SimpleAdapter)la).notifyDataSetChanged();
+	}
+	
+	public void UpdateListByAuto()
+	{
+		ListAdapter la = datalist.getAdapter();
+		int itemNum = datalist.getCount();
+		
+		Map<String, String> map = new HashMap<String, String>(); // 定义Map集合，保存每一行数据
+		
+			map.put("_id", this.data[nBufIndex%10][0]); // 与data_list.xml中的TextView组加匹配
+			map.put("name", tvRecvBuf[nBufIndex]); // 与data_list.xml中的TextView组加匹配
+			map.put("state", this.nState[nBufIndex]); // 与data_list.xml中的TextView组加匹配
+			map.put("ringtime", this.ringtime[nBufIndex]); // 与data_list.xml中的TextView组加匹配
+			Log.i(TAG,"--+--tvRecvBuf:"+ tvRecvBuf[nBufIndex]);
+			this.list.add(map); // 保存了所有的数据行
+		
+		 ((SimpleAdapter)la).notifyDataSetChanged();
+	}
+	
+	
+	
+	private void exitDialog(){
+		Dialog dialog = new AlertDialog.Builder(this)
+			.setTitle("注销!")		// 创建标题
+			.setMessage("注销后将无法收到服务器的信息.") // 表示对话框中的内容
+			.setIcon(R.drawable.pic_m) // 设置LOGO
+			.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					NoticeHistoryActivity.this.finish() ;	// 操作结束
+				}
+			}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					
+				}
+			}).create(); // 创建了一个对话框
+		dialog.show() ;	// 显示对话框
+	}
+	
+	private void BreakDialog(){
+		Dialog dialog = new AlertDialog.Builder(NoticeHistoryActivity.this)
+			.setTitle("警告!")		// 创建标题
+			.setMessage("与服务器连接断开。") // 表示对话框中的内容
+			.setIcon(R.drawable.pic_m) // 设置LOGO
+			.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					
+					
+				Intent intent  = new Intent(NoticeHistoryActivity.this, LoginActivity.class);
+						startActivity(intent);	
+					//回到之前的界面
+					
+				}
+			}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					
+				}
+			}).create(); // 创建了一个对话框
+		dialog.show() ;	// 显示对话框
+	}
+		
 	private void MediaSound(String strRingNo) {
 		if(strRingNo.equals("001"))
 		{

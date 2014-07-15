@@ -93,9 +93,6 @@ public class SecurityRing extends Activity {
 		}
 	}
 	
-	
-	
-
 	private void MediaSound(String strRingNo) {
 		if(strRingNo.equals("001"))
 		{

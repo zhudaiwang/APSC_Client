@@ -46,13 +46,11 @@ public class LoginActivity extends Activity {
 	
 	
 	private static String TAG = "LoginActivity";
-	
-	
-	
 
 	public LoginActivity() {
 		//15120140101 12:16     仓库的门禁报警报11      
 	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -189,45 +187,39 @@ public class LoginActivity extends Activity {
 
 	
 	}
+	
+	public int isInWifi(){
+		//获取wifi服务
+		WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		//判断wifi是否开启
+		if (!wifiManager.isWifiEnabled()) {
+		wifiManager.setWifiEnabled(true);
+		}
+		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+		int ipAddress = wifiInfo.getIpAddress();
+		return ipAddress;
+		}
 
+	public String getLocalIpAddress(){
+	   	//获取wifi服务
+	   	WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+	   	//判断wifi是否开启
+	   	if (!wifiManager.isWifiEnabled()) {
+	   	wifiManager.setWifiEnabled(true);
+	   	}
+	   	WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+	   	int ipAddress = wifiInfo.getIpAddress();
+	   	String ip = intToIp(ipAddress);
+	   	return ip;
+	   	}
 	
-	
-	
-	
-	
-		public int isInWifi(){
-			//获取wifi服务
-			WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-			//判断wifi是否开启
-			if (!wifiManager.isWifiEnabled()) {
-			wifiManager.setWifiEnabled(true);
-			}
-			WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-			int ipAddress = wifiInfo.getIpAddress();
-			return ipAddress;
-			}
-	
-	
+	private String intToIp(int i) {
 
-	    public String getLocalIpAddress(){
-	    	//获取wifi服务
-	    	WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-	    	//判断wifi是否开启
-	    	if (!wifiManager.isWifiEnabled()) {
-	    	wifiManager.setWifiEnabled(true);
-	    	}
-	    	WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-	    	int ipAddress = wifiInfo.getIpAddress();
-	    	String ip = intToIp(ipAddress);
-	    	return ip;
-	    	}
-	    	private String intToIp(int i) {
-
-	    	return (i & 0xFF ) + "." +
-	    	((i >> 8 ) & 0xFF) + "." +
-	    	((i >> 16 ) & 0xFF) + "." +
-	    	( i >> 24 & 0xFF) ;
-	    	}
+	   	return (i & 0xFF ) + "." +
+	   	((i >> 8 ) & 0xFF) + "." +
+	   	((i >> 16 ) & 0xFF) + "." +
+	   	( i >> 24 & 0xFF) ;
+	   	}
 	    	
 	
 }
