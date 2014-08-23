@@ -14,27 +14,24 @@
 
     <AbsoluteLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
-
-        <TextView
-            android:id="@+id/TvServerIP"
-            android:layout_width="102dp"
-            android:layout_height="70dp" />
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" >
 
         <ImageView
             android:id="@+id/imageView1"
             android:layout_width="248dp"
             android:layout_height="180dp"
-            android:layout_x="35dp"
-            android:layout_y="36dp"
+            android:layout_x="57dp"
+            android:layout_y="52dp"
             android:src="@drawable/login_logo" />
 
         <EditText
             android:id="@+id/etName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_x="60dp"
-            android:layout_y="203dp"
+            android:layout_x="82dp"
+            android:layout_y="219dp"
             android:background="@drawable/input_normal"
             android:ems="10"
             android:hint="请输入账号"
@@ -42,12 +39,19 @@
             android:maxLength="10"
             android:textSize="16sp" />
 
+        <TextView
+            android:id="@+id/TvServerIP"
+            android:layout_width="102dp"
+            android:layout_height="70dp"
+            android:layout_x="22dp"
+            android:layout_y="16dp" />
+
         <EditText
             android:id="@+id/etpass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_x="60dp"
-            android:layout_y="248dp"
+            android:layout_x="82dp"
+            android:layout_y="264dp"
             android:background="@drawable/input_normal"
             android:ems="10"
             android:hint="请输入密码"
@@ -59,8 +63,8 @@
             android:layout_width="85dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="56dp"
-            android:layout_x="63dp"
-            android:layout_y="298dp"
+            android:layout_x="85dp"
+            android:layout_y="314dp"
             android:background="@drawable/login_btn_selector"
             android:gravity="center"
             android:text="登   录" />
@@ -70,12 +74,11 @@
             android:layout_width="85dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="16dp"
-            android:layout_x="160dp"
-            android:layout_y="298dp"
+            android:layout_x="182dp"
+            android:layout_y="314dp"
             android:background="@drawable/login_btn_selector"
             android:gravity="center"
             android:text="设置铃声" />
-
     </AbsoluteLayout>
 
 </RelativeLayout>

@@ -78,11 +78,13 @@ public class NoticeHistoryActivity extends Activity {
 	
 	private String MsgCancel = "";
 	
+	private String MsgConfirm = "";
+	
 	private ListView datalist = null; // 定义ListView组件
 	
 	private TextView info = null;
 	
-	private int nSelect = 0;
+	private int nSelect = -1;
 	
 	private Button infoBtn = null;
 	
@@ -199,9 +201,11 @@ public class NoticeHistoryActivity extends Activity {
 	
 	public class TCPCheckConnectThread extends Thread 
 	{  
+		CMakeCmd cMakeAcmd = null;
 		private boolean flag = true;
 	    public TCPCheckConnectThread() 
 	    {  	
+	    	cMakeAcmd.sA = 0;
 	    }
 	    public void stopme()
 	    {
@@ -216,9 +220,12 @@ public class NoticeHistoryActivity extends Activity {
 	                	sleep(10000);
 	                	byte[] data = new byte[7];
 	                	
-	                	CMakeCmd cMakeAcmd = null;
-	                	
-	                	cMakeAcmd.sA = 0;
+	                	                	
+	                	cMakeAcmd.sA +=1;
+	                	if(cMakeAcmd.sA == 0xFFFF)
+	                	{
+	                		cMakeAcmd.sA = 0;
+	                	}
 	                	cMakeAcmd.bB = (byte)0xaa;
 	                	cMakeAcmd.bC = (byte)0xee;
 	                	cMakeAcmd.bD = 0x0;
@@ -282,15 +289,28 @@ public class NoticeHistoryActivity extends Activity {
 	    					public void run() 
 	    					{	
 
+	    						MsgConfirm =  sb.toString().substring(0, 6);
+	    						try
+	    						{
+	    							outputStream.write(MsgConfirm.getBytes());
+	    							outputStream.flush();	
+	    						}
+	    						catch (NumberFormatException e) 
+	    						{
+	    								//	Log.d(TAG, e.getMessage());
+	    						} 
+	    						catch (IOException e) {
+	    								//	Log.d(TAG, e.getMessage());
+	    						}
 	    						Log.i(TAG,"sb.toString().length():"+ sb.toString().length());
-	    						if(sb.toString().length() < 50)
+	    						if((sb.toString().length() < 50)&&(sb.toString().length()>25))
 	    						{
 	    							ringType =  sb.toString().substring(0, 1);
 	    							if(ringType.equals("0"))
 	    							{
 	    								int nAddrIndex = 0;
 	    								//报警已经关闭的信息。请客户端删除对应的报警信息。
-	    								MsgCancel =  sb.toString().substring(1, 4);
+	    								MsgCancel =  sb.toString().substring(1, 6);
 	    								
 	    								//查找已接收列表中 （ringAddr[nBufIndex]）地址的序号。
 	    								for(nAddrIndex = 0; nAddrIndex< ringAddr.length; nAddrIndex++)
@@ -313,9 +333,9 @@ public class NoticeHistoryActivity extends Activity {
 	    							else 
 	    							{
 	    								
-	    								tvRecvBuf[nBufIndex] = sb.toString().substring(21);
-		    							ringtime[nBufIndex] =  sb.toString().substring(4, 18);
-		    							ringAddr[nBufIndex] =  sb.toString().substring(1, 4);
+	    								tvRecvBuf[nBufIndex] = sb.toString().substring(23);
+		    							ringtime[nBufIndex] =  sb.toString().substring(6, 20);
+		    							ringAddr[nBufIndex] =  sb.toString().substring(1, 6);
 	    							}
 	    							
 	    						}
@@ -381,13 +401,26 @@ public class NoticeHistoryActivity extends Activity {
 				//这里添加发送关闭给服务器信息的代码，等待1秒钟，如果服务器回复指定信息就关闭更新这个列表
 				try 
 				{	
-					String StrSendMsg  = ringAddr[nSelect];
+					if(nSelect != -1)
+					{
+						String StrSendMsg  = ringAddr[nSelect];
 					
-					outputStream.write(StrSendMsg.getBytes());
-					outputStream.flush();	
-					Toast toast=Toast.makeText(getApplicationContext(), "发送关闭指令成功，等待服务器确认！", Toast.LENGTH_SHORT); 
-					toast.setGravity(Gravity.TOP|Gravity.CENTER, 0, 300); 
-					toast.show();
+						outputStream.write(StrSendMsg.getBytes());
+						outputStream.flush();	
+						Toast toast=Toast.makeText(getApplicationContext(), "发送关闭指令成功，等待服务器确认！", Toast.LENGTH_SHORT); 
+						toast.setGravity(Gravity.TOP|Gravity.CENTER, 0, 300); 
+						toast.show();
+						
+						nSelect = -1;
+						NoticeHistoryActivity.this.info.setText("安普思创信息列表");	
+					}
+					else
+					{
+						Toast toast=Toast.makeText(getApplicationContext(), "请先选中需要关闭的报警", Toast.LENGTH_SHORT); 
+						toast.setGravity(Gravity.TOP|Gravity.CENTER, 0, 300); 
+						toast.show();
+					}
+
 				} 
 				catch (NumberFormatException e) 
 				{

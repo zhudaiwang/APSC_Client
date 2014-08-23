@@ -20,7 +20,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-public class SecurityRing extends Activity {
+public class SecurityRingActivity extends Activity {
 	private String data[][] = 
 			{
 			{ "001", " 断续声" },
@@ -70,7 +70,7 @@ public class SecurityRing extends Activity {
 		this.datalist.setAdapter(this.simpleAdapter);
 		this.datalist.setOnItemClickListener(new OnItemClickListenerImpl()); // 单击选项
 		
-		SecurityRing.this.info.setText("当前铃声为：" +share.getString("RingFilesName", "  默认铃声"));
+		SecurityRingActivity.this.info.setText("当前铃声为：" +share.getString("RingFilesName", "  默认铃声"));
 	}
 
 	private class OnItemClickListenerImpl implements OnItemClickListener {
@@ -79,11 +79,11 @@ public class SecurityRing extends Activity {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-			Map<String, String> map = (Map<String, String>) SecurityRing.this.simpleAdapter
+			Map<String, String> map = (Map<String, String>) SecurityRingActivity.this.simpleAdapter
 					.getItem(position);
 			String _id = map.get("_id");
 			String name = map.get("name");
-			SecurityRing.this.info.setText("当前铃声为：" + name  );
+			SecurityRingActivity.this.info.setText("当前铃声为：" + name  );
 			
 			SharedPreferences.Editor edit = share.edit();
 			edit.putString("RingFilesNo", _id);
@@ -96,67 +96,67 @@ public class SecurityRing extends Activity {
 	private void MediaSound(String strRingNo) {
 		if(strRingNo.equals("001"))
 		{
-			SecurityRing.this.myMediaPlayer = MediaPlayer.create(SecurityRing.this, R.raw.r001);	// 要锟斤拷锟脚碉拷锟侥硷拷
+			SecurityRingActivity.this.myMediaPlayer = MediaPlayer.create(SecurityRingActivity.this, R.raw.r001);	// 要锟斤拷锟脚碉拷锟侥硷拷
 		}
 		else if (strRingNo.equals("002"))
 		{
-			SecurityRing.this.myMediaPlayer = MediaPlayer.create(SecurityRing.this, R.raw.r002);	// 要锟斤拷锟脚碉拷锟侥硷拷
+			SecurityRingActivity.this.myMediaPlayer = MediaPlayer.create(SecurityRingActivity.this, R.raw.r002);	// 要锟斤拷锟脚碉拷锟侥硷拷
 		}
 		else if (strRingNo.equals("003"))
 		{
-			SecurityRing.this.myMediaPlayer = MediaPlayer.create(SecurityRing.this, R.raw.r003);	// 要锟斤拷锟脚碉拷锟侥硷拷
+			SecurityRingActivity.this.myMediaPlayer = MediaPlayer.create(SecurityRingActivity.this, R.raw.r003);	// 要锟斤拷锟脚碉拷锟侥硷拷
 		}
 		else if (strRingNo.equals("004"))
 		{
-			SecurityRing.this.myMediaPlayer = MediaPlayer.create(SecurityRing.this, R.raw.r004);	// 要锟斤拷锟脚碉拷锟侥硷拷
+			SecurityRingActivity.this.myMediaPlayer = MediaPlayer.create(SecurityRingActivity.this, R.raw.r004);	// 要锟斤拷锟脚碉拷锟侥硷拷
 		}
 		else if (strRingNo.equals("005"))
 		{
-			SecurityRing.this.myMediaPlayer = MediaPlayer.create(SecurityRing.this, R.raw.r005);	// 要锟斤拷锟脚碉拷锟侥硷拷
+			SecurityRingActivity.this.myMediaPlayer = MediaPlayer.create(SecurityRingActivity.this, R.raw.r005);	// 要锟斤拷锟脚碉拷锟侥硷拷
 		}
 		else if (strRingNo.equals("006"))
 		{
-			SecurityRing.this.myMediaPlayer = MediaPlayer.create(SecurityRing.this, R.raw.r006);	// 要锟斤拷锟脚碉拷锟侥硷拷
+			SecurityRingActivity.this.myMediaPlayer = MediaPlayer.create(SecurityRingActivity.this, R.raw.r006);	// 要锟斤拷锟脚碉拷锟侥硷拷
 		}
 		else if (strRingNo.equals("007"))
 		{
-			SecurityRing.this.myMediaPlayer = MediaPlayer.create(SecurityRing.this, R.raw.r007);	// 要锟斤拷锟脚碉拷锟侥硷拷
+			SecurityRingActivity.this.myMediaPlayer = MediaPlayer.create(SecurityRingActivity.this, R.raw.r007);	// 要锟斤拷锟脚碉拷锟侥硷拷
 		}
 		else if (strRingNo.equals("008"))
 		{
-			SecurityRing.this.myMediaPlayer = MediaPlayer.create(SecurityRing.this, R.raw.r008);	// 要锟斤拷锟脚碉拷锟侥硷拷
+			SecurityRingActivity.this.myMediaPlayer = MediaPlayer.create(SecurityRingActivity.this, R.raw.r008);	// 要锟斤拷锟脚碉拷锟侥硷拷
 		}
 		else if (strRingNo.equals("009"))
 		{
-			SecurityRing.this.myMediaPlayer = MediaPlayer.create(SecurityRing.this, R.raw.r009);	// 要锟斤拷锟脚碉拷锟侥硷拷
+			SecurityRingActivity.this.myMediaPlayer = MediaPlayer.create(SecurityRingActivity.this, R.raw.r009);	// 要锟斤拷锟脚碉拷锟侥硷拷
 		}
 		else if (strRingNo.equals("010"))
 		{
-			SecurityRing.this.myMediaPlayer = MediaPlayer.create(SecurityRing.this, R.raw.r010);	// 要锟斤拷锟脚碉拷锟侥硷拷
+			SecurityRingActivity.this.myMediaPlayer = MediaPlayer.create(SecurityRingActivity.this, R.raw.r010);	// 要锟斤拷锟脚碉拷锟侥硷拷
 		}
 		else 
 		{
-			SecurityRing.this.myMediaPlayer = MediaPlayer.create(SecurityRing.this, R.raw.r011);	// 要锟斤拷锟脚碉拷锟侥硷拷	
+			SecurityRingActivity.this.myMediaPlayer = MediaPlayer.create(SecurityRingActivity.this, R.raw.r011);	// 要锟斤拷锟脚碉拷锟侥硷拷	
 		}
 		
 		
-		if (SecurityRing.this.myMediaPlayer != null) 
+		if (SecurityRingActivity.this.myMediaPlayer != null) 
 			{
-			SecurityRing.this.myMediaPlayer.stop(); // 停止锟斤拷锟斤拷
+			SecurityRingActivity.this.myMediaPlayer.stop(); // 停止锟斤拷锟斤拷
 			}
-		SecurityRing.this.myMediaPlayer.setOnCompletionListener(
+		SecurityRingActivity.this.myMediaPlayer.setOnCompletionListener(
 			new OnCompletionListener()
 			{
 				@Override
 				public void onCompletion(MediaPlayer mp)
 				{
-					SecurityRing.this.myMediaPlayer.release() ;	// 锟酵凤拷锟斤拷源
+					SecurityRingActivity.this.myMediaPlayer.release() ;	// 锟酵凤拷锟斤拷源
 				}
 			});
 		
 		try {
-			SecurityRing.this.myMediaPlayer.prepare() ;
-			SecurityRing.this.myMediaPlayer.start() ;
+			SecurityRingActivity.this.myMediaPlayer.prepare() ;
+			SecurityRingActivity.this.myMediaPlayer.start() ;
 		} catch (Exception e) 
 		{
 		}
